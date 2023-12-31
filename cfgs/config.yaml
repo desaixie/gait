@@ -1,0 +1,178 @@
+defaults:
+  - _self_
+#  - task@_global_: meta_train
+  - task@_global_: single_train
+#  - task@_global_: cma-es
+#  - task@_global_: mpc
+#  - task@_global_: evaluate
+#  - task@_global_: finetuning
+  - override hydra/launcher: submitit_local
+
+# task settings
+frame_stack: 1
+action_repeat: 1
+discount: 0.99
+# train settings
+num_seed_frames: 4000  # don't update agent before this
+#num_seed_frames: 300  # don't update agent before this
+# eval
+eval_every_episodes: 300  # every 300 training episodes, eval for 10 episodes
+#eval_every_episodes: 1  # every 300 training episodes, eval for 10 episodes
+num_eval_episodes: 10
+# replay buffer
+replay_buffer_size: 1000000
+replay_buffer_num_workers: ???  # Suggested: n cpu cores, or 4*n_GPUs, better experiment with this
+nstep: 3
+batch_size: 256
+# misc
+seed: 1
+device: cuda:0  # used to create networks
+save_video: false
+save_train_video: false
+use_tb: true
+# experiment
+experiment: exp
+# agent
+lr: 1e-4
+feature_dim: 50
+state_dim: [3, 84, 84]
+action_dims: 5
+pose_dim: 5
+#step_size: [0.25, 0.25, 0.25, 1., 1.]
+step_size: [0.25, 0.25, 0.25, 0.25, 0.25]
+#step_size: [0.1, 0.1, 0.1, 0.1, 0.1]
+max_timestep: 15 # 15, 31
+max_episode: 100
+use_position: True
+outside: False # use outside initial pose in generate initial pose list (not used anymore)
+scene_name: None  # would be read as a string "None"
+soft_bound: True  # True for not forcing bound but use negative out of bound reward instead
+fixed_initial_pose: None
+aesthetics_model: None  # placeholder
+negative_reward: -10.
+map_to_positive: False
+new_reward: False
+
+# ray multi-gpu
+ray: True
+num_ray_gpus: 7  # for scenes
+# data worker
+ray_model_sync_local_episode: 2  # in selfplay worker, sync model every x local episodes
+selfplay_step_sync_local_episode: 1  #
+# update worker
+ray_model_sync_interval_update: 15  # in update worker, upload new model every x update steps
+ray_step_sync_interval_update: 10
+
+# diversity
+diversity: True
+exc_hidden_size: 128  # excluding sequence layer hidden size
+num_excluding_sequences: 4
+diversity_radius: 1
+order_invariant: False  # for diversity network input. turn off is better
+distance_obs: True
+rand_exc_pose: False
+rand_diversity_radius: True  # random radius between [0.3, 1.3]
+avg_distance: False
+
+# smoothness
+smoothness: True
+smoothness_threshold: 0.25  # replaced by gaussian
+smoothness_window: 3  # -1 to turn off
+position_only_smoothness: False
+separate_step_sizes: True
+weighted_window: None  # None to turn off. turn off is better
+#weighted_window: [4, 2, 1]  # None to turn off
+position_orientation_separate: True  # cant coexist with position_only_smoothness
+#smoothness_radius_trans: 0.5
+#smoothness_radius_rot: 1.
+#zero_radius: 0.05
+
+# habitat-sim
+camera_fov: 60
+gpu_aes_obs: True
+aes_obs_width: 240
+aes_obs_height: 240
+
+# ablation
+constant_noise: -1  # 0.2. -1 to turn off
+no_aug: False
+avg_smoothness: False
+no_hidden: False
+
+#
+use_rotation: True
+#
+uniform_sample: false
+# context
+use_context: False
+context_hidden_dim: [20]
+context_history_length: 10
+# snapshot
+save_snapshot: true
+# bounding box info
+input_sceneName: "room_0"
+boundingbox_dir: "../../../denseSampling"
+save_dense_sample_volume_dir: "/home/peggy/Research/Aesthetic/aestheticview/denseSampling/"
+# multiprocessing
+use_multiprocessing: False  # use multiprocessing to create SubprocVecEnv, evenly spread envs on each GPU
+GPU_IDs: [1, 2, 3, 4, 5, 6, 7]  # used to create simulation sub processes
+#GPU_IDs: [1]  # used to create simulation sub processes
+async_: False
+num_async_update_iters: 20
+num_async_episodes: 100
+
+agent:
+  _target_: drqv2_net.DrQV2Agent  # custom drqv2 instead of original. Class of agent
+
+  # arguments passed to DrQV2Agent.__init__()
+  obs_shape: ???  # to be specified later
+  pos_shape: ???  # (3,)
+  action_shape: ??? # to be specified later
+  device: ${device}
+  lr: ${lr}
+  critic_target_tau: 0.01
+  update_every_steps: 2  # 1 when open 2 duplicate scenes for single scene training. DrQv2: 2
+  use_tb: True  # ${use_tb}  # Tensorboard
+  num_expl_steps: 2000  # use random action before this
+  hidden_dim: 1024
+  feature_dim: ${feature_dim}
+  stddev_schedule: ${stddev_schedule}
+  stddev_clip: 0.3
+  use_context: ${use_context}
+  context_hidden_dim: ${context_hidden_dim}
+  context_history_length: ${context_history_length}
+  nstep: ${nstep}
+  batch_size: ${batch_size}
+  num_scenes: ${num_scenes}
+  use_position: ${use_position}
+  diversity: ${diversity}
+  exc_hidden_size: ${exc_hidden_size}
+  no_hidden: ${no_hidden}
+  num_excluding_sequences: ${num_excluding_sequences}
+  order_invariant: ${order_invariant}  # for diversity network input
+  distance_obs: ${distance_obs}
+  smoothness: ${smoothness}
+  position_only_smoothness: ${position_only_smoothness}
+  smoothness_window: ${smoothness_window}
+  position_orientation_separate: ${position_orientation_separate}
+  rand_diversity_radius: ${rand_diversity_radius}  # random radius between [0.3, 1.3]
+  constant_noise: ${constant_noise}
+  no_aug: ${no_aug}
+
+hydra:
+  run:
+#    dir: ./exp_local/${now:%Y.%m.%d}/${now:%H%M%S}_${hydra.job.override_dirname}
+    dir: ./logs/${algo}/${now:%Y.%m.%d}_${now:%H%M%S}
+  sweep:
+    dir: ./exp/${now:%Y.%m.%d}/${now:%H%M}_${agent_cfg.experiment}
+    subdir: ${hydra.job.num}
+  launcher:
+    # https://hydra.cc/docs/plugins/submitit_launcher/
+    timeout_min: 4300
+    # these settings have no effect
+    cpus_per_task: 8
+    gpus_per_node: 1
+    tasks_per_node: 1
+    mem_gb: 192
+    nodes: 1
+    #submitit_folder: ./exp/${now:%Y.%m.%d}/${now:%H%M%S}_${agent_cfg.experiment}/.slurm

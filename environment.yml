@@ -1,0 +1,31 @@
+name: habitat
+channels:
+  - defaults
+dependencies:
+  - cmake=3.14.0
+  - python=3.7
+  - torchaudio
+  - cudatoolkit=11.3
+  - torchvision
+  - pytorch
+  - cudatoolkit-dev
+  - scikit-learn
+  - opencv
+  - pytorch-cluster
+  - scikit-image
+  - pip:
+    - cma==3.2.2
+    - dm-env==1.5
+    - gym==0.23.1
+    - habitat-sim==0.2.1
+    - hydra-core==1.1.2
+    - hydra-submitit-launcher==1.1.6
+    - imageio==2.19.1
+    - imageio-ffmpeg==0.4.7
+    - matplotlib==3.5.2
+    - numpy-quaternion==2022.4.2
+    - ray==2.2.0
+    - scipy==1.7.3
+    - tensorboard==2.9.0
+    - termcolor==1.1.0
+prefix: /visdata2/anaconda3/envs/habitat

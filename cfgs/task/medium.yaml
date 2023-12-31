@@ -1,0 +1,22 @@
+#num_train_frames: 3100000  # 3.1M
+#stddev_schedule: 'linear(1.0,0.1,500000)'  # 500k
+
+#num_train_frames: 700000 # 700k
+#stddev_schedule: 'linear(1.0,0.1,500000)'  # 500k
+
+#num_train_frames: 1000000 # 1m
+#stddev_schedule: 'linear(1.0,0.1,700000)'  # 700k
+
+#num_train_frames: 1500000 # 1.5m
+#stddev_schedule: 'linear(1.0,0.1,1000000)'  # 1m
+
+#num_train_frames: 2200000 # 2.2m
+#stddev_schedule: 'linear(1.0,0.1,1500000)'  # 1.5m
+
+# single-gpu default
+#stddev_schedule: 'linear(1.0,0.1,700000)'  # 700k
+#num_train_frames: 1500000 # 1.5m
+
+# multi-gpu default
+stddev_schedule: 'linear(1.0,0.1,1000000)'  # 1m
+num_train_frames: 3000000 # 3m

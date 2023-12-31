@@ -1,0 +1,25 @@
+defaults:
+  - medium  # easy, medium, or hard
+  - _self_
+
+algo: drqv2_habitat
+#algo: curl
+evaluating: False
+
+task_name: habitat_sim
+# multiple scenes
+num_scenes: 1
+sceneList: ["room_0_"]
+#sceneList: ["apartment_2_livingroom"]
+#sceneList: ["office_3_"]
+#sceneList: ["room_1_"]
+#sceneList: ["office_0_"]
+#sceneList: ["apartment_0_bedroomUpperFloorMirror"]
+
+scene_index: 0
+mesh_name: "mesh"
+#mesh_name: "mesh_semantic"
+gpu_device_id: 0
+double_single_train: False
+
+load_snapshot: false

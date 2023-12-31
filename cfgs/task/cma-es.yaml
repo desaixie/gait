@@ -1,0 +1,39 @@
+defaults:
+  - _self_
+
+algo: cmaes
+evaluating: False
+
+task_name: habitat_sim
+# multiple scenes
+num_scenes: 1
+sceneList: ["room_0_"]
+#sceneList: ["apartment_2_livingroom"]
+#sceneList: ["office_3_"]
+scene_index: 0
+mesh_name: "mesh"
+#mesh_name: "mesh_semantic"
+gpu_device_id: 0
+cma_user_study_mode: True
+
+load_snapshot: false
+
+# CMA-ES hyperparameters
+# for 5D (single view or aciton mode)
+sigma: 1.0
+popsize: 100
+#sigma: 0.1  # for quick debug
+#popsize: 2
+
+#sigma: 0.5  # 150 D debug
+#popsize: 8  # 150 D debug
+
+# CMA-ES mode
+action: True
+single_view: False
+sequence: False  # optimize 150D pose, abandoned
+
+find_low: False
+
+# saved trajectory loading
+trajectory_path: logs/cmaes/1

@@ -1,0 +1,26 @@
+defaults:
+  - _self_
+
+algo: mpc
+evaluating: False
+
+task_name: habitat_sim
+# multiple scenes
+num_scenes: 1
+sceneList: ["room_0_"]
+#sceneList: ["apartment_2_livingroom"]
+#sceneList: ["office_3_"]
+scene_index: 0
+mesh_name: "mesh"
+#mesh_name: "mesh_semantic"
+gpu_device_id: 0
+cma_user_study_mode: True
+
+load_snapshot: false
+
+# mpc
+mpc_horizon: 5
+num_actions: 8
+
+# saved trajectory loading
+trajectory_path: logs/cmaes/1

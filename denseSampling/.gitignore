@@ -1,0 +1,12 @@
+# folder
+
+
+# results (image, npy, raw)
+*.png
+*.raw
+*.npy
+/sampleScoreResult
+
+*.raw
+*.zip
+
